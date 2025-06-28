@@ -4,11 +4,10 @@
 **Backend**
 
 ```bash
-cd backend
 python -m venv .venv
 source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
 pip install -r requirements.txt
-uvicorn main:app --reload   # Server starts on http://127.0.0.1:8000
+uvicorn backend.main:app --reload   # Server starts on http://127.0.0.1:8000
 ```
 
 **Front‑end**

@@ -129,6 +129,6 @@ async def download(file_name: str):
 # Serve the modern static front‑end (built with Tailwind / Vanilla JS)
 from fastapi.staticfiles import StaticFiles
 
-static_path = Path(__file__).parent / "static"
+static_path = Path(__file__).parent.parent / "static"
 if static_path.exists():
     app.mount("/", StaticFiles(directory=str(static_path), html=True), name="static")
