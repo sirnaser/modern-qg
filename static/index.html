@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Question Generator with Model Choice</title>
+</head>
+<body>
+    <h2>Upload Course Content and Generate Questions</h2>
+    <form id="uploadForm">
+        <label for="modelSelect">Choose a model:</label>
+        <select id="modelSelect" name="modelSelect">
+            <option value="programming">Programming Model</option>
+            <option value="math">Math Model</option>
+        </select><br/><br/>
+
+        <input type="file" id="fileInput" accept=".md,.txt" required/>
+        <button type="submit">Generate Questions</button>
+    </form>
+
+    <h3 id="downloadLink"></h3>
+
+    <h2>Upload Sample LaTeX Question to Generate Similar
+Questions</h2>
+    <form id="latexForm">
+        <label for="latexFile">Select LaTeX file:</label>
+        <input type="file" id="latexFile" accept=".tex" required/>
+        <select id="modelSelect2" name="modelSelect2">
+            <option value="programming">Programming Model</option>
+            <option value="math">Math Model</option>
+        </select>
+        <button type="submit">Generate Similar Questions</button>
+    </form>
+
+    <h3 id="downloadLink2"></h3>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit',
+function (e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+        const modelSelect = document.getElementById('modelSelect');
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function () {
+            const payload = {
+                content: reader.result,
+                model_type: modelSelect.value
+            };
+
+            fetch('/generate_questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                const file_path = data.file_path;
+                document.getElementById('downloadLink').innerHTML =
+`<a href="/download_file/${file_path}" download>Download
+Questions.tex</a>`;
+            })
+            .catch(err => {
+                alert('Error communicating with the server');
+                console.error(err);
+            });
+        };
+        reader.readAsText(file);
+    });
+
+    document.getElementById('latexForm').addEventListener('submit',
+function (e) {  // Corrected Line
+        e.preventDefault();
+        const fileInput = document.getElementById('latexFile');
+        const modelSelect = document.getElementById('modelSelect2');
+        const file = fileInput.files[0];
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+
+fetch(`/generate_similar_questions?model_type=${modelSelect.value}`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            const file_path = data.file_path;
+            document.getElementById('downloadLink2').innerHTML = `<a
+href="/download_file/${file_path}" download>Download Similar
+Questions.tex</a>`;
+        })
+        .catch(err => {
+            alert('Error communicating with the server');
+            console.error(err);
+        });
+    });
+</script>
+</body>
+</html>
