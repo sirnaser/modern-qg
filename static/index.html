@@ -1,149 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>تولید سوالات درسی</title>
-    <!-- TailwindCSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Animated gradient background */
-        @keyframes gradient {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
-        }
-        body{
-            background:linear-gradient(120deg,#1e3c72,#2a5298,#1e3c72);
-            background-size:200% 200%;
-            animation:gradient 15s ease infinite;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>سامانهٔ تولید سؤال</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 text-white">
-    <div class="w-full max-w-xl bg-white/10 backdrop-blur rounded-2xl p-6 shadow-xl space-y-6">
-        <h1 class="text-center text-2xl font-bold">تبدیل محتوای درس به سؤالات امتحانی</h1>
+<body>
+  <div id="particles-js"></div>
+  <div class="bg-graph"></div>
 
-        <!-- Tab buttons -->
-        <div class="flex justify-center gap-4">
-            <button id="tabContent" class="tab-btn border-b-2 border-transparent pb-1">از محتوا</button>
-            <button id="tabSample" class="tab-btn border-b-2 border-transparent pb-1">از نمونه سؤالات</button>
-        </div>
+  <header>
+    <img src="logo.svg" alt="University Logo" />
+    <h1>سامانهٔ تولید سؤال<br>دانشکدهٔ علوم ریاضی – دانشگاه فردوسی مشهد</h1>
+  </header>
 
-        <!-- Content upload -->
-        <form id="formContent" class="space-y-4">
-            <div id="dropContent" class="relative flex flex-col items-center justify-center border-2 border-dashed border-indigo-300 rounded-xl p-6 cursor-pointer hover:bg-white/5">
-                <p class="pointer-events-none text-center">فایل Markdown خود را اینجا رها کنید یا کلیک کنید</p>
-                <input type="file" accept=".md,.markdown,.txt" id="mdFile" class="absolute inset-0 opacity-0 cursor-pointer">
-            </div>
+  <main>
+    <input type="file" id="file" accept=".md,.tex" />
 
-            <select id="modelContent" class="w-full px-4 py-2 rounded-md text-black">
-                <option value="programming">مدل برنامه نویسی</option>
-                <option value="math">مدل ریاضیات</option>
-            </select>
-
-            <button type="submit" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50">تولید سؤال</button>
-
-            <div id="linkContent" class="text-center mt-2"></div>
-        </form>
-
-        <!-- Sample upload -->
-        <form id="formSample" class="space-y-4 hidden">
-            <div id="dropSample" class="relative flex flex-col items-center justify-center border-2 border-dashed border-indigo-300 rounded-xl p-6 cursor-pointer hover:bg-white/5">
-                <p class="pointer-events-none text-center">فایل LaTeX نمونه را رها کنید یا کلیک کنید</p>
-                <input type="file" accept=".tex" id="texFile" class="absolute inset-0 opacity-0 cursor-pointer">
-            </div>
-
-            <select id="modelSample" class="w-full px-4 py-2 rounded-md text-black">
-                <option value="programming">مدل برنامه نویسی</option>
-                <option value="math">مدل ریاضیات</option>
-            </select>
-
-            <button type="submit" class="w-full py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50">تولید سؤال مشابه</button>
-
-            <div id="linkSample" class="text-center mt-2"></div>
-        </form>
+    <div class="row">
+      <label for="lang">زبان خروجی</label>
+      <select id="lang">
+        <option value="fa" selected>فارسی</option>
+        <option value="en">English</option>
+      </select>
     </div>
 
-<script>
-// Tab logic
-const tabBtns = document.querySelectorAll('.tab-btn');
-const formContent = document.getElementById('formContent');
-const formSample  = document.getElementById('formSample');
+    <div class="row">
+      <label for="model">مدل زبانی</label>
+      <select id="model">
+        <option value="auto" selected>انتخاب خودکار</option>
+        <option value="math">ریاضی</option>
+        <option value="programming">برنامه‌نویسی</option>
+        <option value="deepseek">DeepSeek</option>
+      </select>
+    </div>
 
-tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        tabBtns.forEach(b => b.classList.remove('border-indigo-400','text-indigo-200'));
-        btn.classList.add('border-indigo-400','text-indigo-200');
-        if(btn.id === 'tabContent'){
-            formContent.classList.remove('hidden');
-            formSample.classList.add('hidden');
-        } else {
-            formSample.classList.remove('hidden');
-            formContent.classList.add('hidden');
-        }
-    })
-});
-// Init first tab
-document.getElementById('tabContent').click();
+    <button id="generate">تولید سؤال</button>
+    <p id="status">در انتظار انتخاب فایل…</p>
+    <a id="download" style="display:none" href="#">دانلود فایل خروجی</a>
+  </main>
 
-// Helper: send form data
-async function sendData(formData){
-    const res = await fetch('/generate_questions', {
-        method:'POST',
-        body:formData
-    });
-    if(!res.ok) throw new Error('Server error');
-    return await res.json();
-}
-
-// Content form submit
-formContent.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const file = document.getElementById('mdFile').files[0];
-    if(!file){alert('فایل محتوا را انتخاب کنید'); return;}
-    const formData = new FormData();
-    formData.append('md_file', file);
-    formData.append('model_type', document.getElementById('modelContent').value);
-    try{
-        const data = await sendData(formData);
-        document.getElementById('linkContent').innerHTML = `<a class="underline" href="/download/${data.file_name}" download>دریافت فایل LaTeX</a>`;
-    }catch(err){
-        alert(err.message);
-    }
-});
-
-// Sample form submit
-formSample.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const file = document.getElementById('texFile').files[0];
-    if(!file){alert('فایل نمونه را انتخاب کنید'); return;}
-    const formData = new FormData();
-    formData.append('sample_file', file);
-    formData.append('model_type', document.getElementById('modelSample').value);
-    try{
-        const data = await sendData(formData);
-        document.getElementById('linkSample').innerHTML = `<a class="underline" href="/download/${data.file_name}" download>دریافت فایل LaTeX</a>`;
-    }catch(err){
-        alert(err.message);
-    }
-});
-
-// Drag‑and‑drop styling
-function enableDropZone(el){
-    el.addEventListener('dragover', e => {e.preventDefault(); el.classList.add('bg-white/10')});
-    el.addEventListener('dragleave', () => el.classList.remove('bg-white/10'));
-    el.addEventListener('drop', e => {
-        e.preventDefault();
-        const input = el.querySelector('input[type=file]');
-        input.files = e.dataTransfer.files;
-        el.classList.remove('bg-white/10');
-    });
-}
-enableDropZone(document.getElementById('dropContent'));
-enableDropZone(document.getElementById('dropSample'));
-</script>
+  <script src="script.js"></script>
+  <script src="particles-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
 </body>
 </html>
