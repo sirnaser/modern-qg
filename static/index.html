@@ -2,47 +2,78 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>سامانهٔ تولید سؤال</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>سامانه طرح سوال - دانشگاه فردوسی مشهد</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
+
   <div id="particles-js"></div>
-  <div class="bg-graph"></div>
 
-  <header>
-    <img src="logo.svg" alt="University Logo" />
-    <h1>سامانهٔ تولید سؤال<br>دانشکدهٔ علوم ریاضی – دانشگاه فردوسی مشهد</h1>
-  </header>
-
-  <main>
-    <input type="file" id="file" accept=".md,.tex" />
-
-    <div class="row">
-      <label for="lang">زبان خروجی</label>
-      <select id="lang">
-        <option value="fa" selected>فارسی</option>
-        <option value="en">English</option>
-      </select>
+  <div class="container my-5 p-4 rounded shadow-sm" style="max-width: 720px; position: relative; z-index: 10;">
+    <div class="text-center mb-4">
+      <img src="/static/logo.svg" alt="دانشگاه فردوسی مشهد" class="logo" />
+      <h2 class="mt-3">سامانه طرح سوال<br/><small>دانشکده علوم ریاضی</small></h2>
     </div>
 
-    <div class="row">
-      <label for="model">مدل زبانی</label>
-      <select id="model">
-        <option value="auto" selected>انتخاب خودکار</option>
-        <option value="math">ریاضی</option>
-        <option value="programming">برنامه‌نویسی</option>
-        <option value="deepseek">DeepSeek</option>
-      </select>
+    <ul class="nav nav-tabs mb-3" id="modeTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="from-content-tab" data-bs-toggle="tab" data-bs-target="#from-content" type="button" role="tab" aria-controls="from-content" aria-selected="true">طرح سوال از محتوا (MD)</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="from-tex-tab" data-bs-toggle="tab" data-bs-target="#from-tex" type="button" role="tab" aria-controls="from-tex" aria-selected="false">طرح سوال مشابه (TeX)</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="modeTabsContent">
+      <!-- From Markdown Content -->
+      <div class="tab-pane fade show active" id="from-content" role="tabpanel" aria-labelledby="from-content-tab">
+        <form id="formContent" class="mb-3">
+          <label for="contentInput" class="form-label">متن محتوا (Markdown)</label>
+          <input type="file" id="mdFileInput" accept=".md" class="form-control" />
+
+          <label for="modelSelectContent" class="form-label mt-3">انتخاب مدل زبانی</label>
+          <select id="modelSelectContent" class="form-select"></select>
+
+          <label for="languageSelectContent" class="form-label mt-3">زبان خروجی</label>
+          <select id="languageSelectContent" class="form-select">
+            <option value="fa" selected>فارسی</option>
+            <option value="en">انگلیسی</option>
+          </select>
+
+          <button type="submit" class="btn btn-success mt-4 w-100">تولید سوالات</button>
+        </form>
+      </div>
+
+      <!-- From TeX File -->
+      <div class="tab-pane fade" id="from-tex" role="tabpanel" aria-labelledby="from-tex-tab">
+        <form id="formTex" class="mb-3">
+          <label for="texFileInput" class="form-label">آپلود فایل TeX نمونه سوالات</label>
+          <input type="file" id="texFileInput" accept=".tex" class="form-control" />
+
+          <label for="modelSelectTex" class="form-label mt-3">انتخاب مدل زبانی</label>
+          <select id="modelSelectTex" class="form-select"></select>
+
+          <label for="languageSelectTex" class="form-label mt-3">زبان خروجی</label>
+          <select id="languageSelectTex" class="form-select">
+            <option value="fa" selected>فارسی</option>
+            <option value="en">انگلیسی</option>
+          </select>
+
+          <button type="submit" class="btn btn-success mt-4 w-100">تولید سوالات</button>
+        </form>
+      </div>
     </div>
 
-    <button id="generate">تولید سؤال</button>
-    <p id="status">در انتظار انتخاب فایل…</p>
-    <a id="download" style="display:none" href="#">دانلود فایل خروجی</a>
-  </main>
+    <div id="statusArea" class="mt-4 p-3 border rounded bg-white text-dark" style="min-height: 100px; font-size: 0.9rem;"></div>
 
-  <script src="script.js"></script>
-  <script src="particles-config.js"></script>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="/static/particles-config.js"></script>
+  <script src="/static/script.js"></script>
 
 </body>
 </html>
