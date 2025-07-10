@@ -1,4 +1,4 @@
-# 🎓 Question Generation System (Offline, Local Models)
+# 📚 Question Generation System (Offline, Local Models)
 
 An elegant, extendable, and offline-friendly question generation system that uses locally hosted language models (e.g., LLaMA, DeepSeek) to generate high-quality questions from lesson content or example exam files.
 
@@ -43,7 +43,7 @@ modern-qg/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/modern-qg.git
+git clone https://github.com/sirnaser/modern-qg.git
 cd modern-qg
 ```
 
