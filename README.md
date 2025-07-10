@@ -1,118 +1,171 @@
-# Modern Question Generator API
+# 🎓 Question Generation System (Offline, Local Models)
 
-A FastAPI-based backend with a simple React frontend for generating exam questions from educational content using local language models.
-
----
-
-## Features
-
-- Upload educational content files in `.md` (Markdown) or `.tex` (LaTeX) formats.
-- Automatically detect content type and select a suitable language model (Programming or Math).
-- Option to select output language (Persian/Farsi or English).
-- Generate LaTeX formatted exam questions that are logical, deep, and creative.
-- Clean, minimal user interface with university branding and animated background.
-- Download generated `.tex` files easily.
-- Support for local language models via `llama.cpp` or Ollama integration.
+An elegant, extendable, and offline-friendly question generation system that uses locally hosted language models (e.g., LLaMA, DeepSeek) to generate high-quality questions from lesson content or example exam files.
 
 ---
 
-## Requirements
+## 🚀 Features
 
-- Python 3.9 or higher
-- Node.js and npm (for frontend build)
-- Compatible language models such as DeepSeek-R1, Mistral 7B, Falcon, etc.
-
----
-
-## Setup Instructions
-
-### Backend Setup
-
-1. Create and activate a Python virtual environment:
-
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate   # On Linux/macOS
-   .venv\Scripts\activate      # On Windows
-   ```
-
-2. Install backend dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Run the backend server:
-
-   ```bash
-   uvicorn backend.main:app --reload
-   ```
-
-   The API server will be available at:  
-   `http://127.0.0.1:8000`
+- 📄 Supports two input types:
+  - Markdown lesson content (`.md`)
+  - Example questions in LaTeX format (`.tex`)
+- 🤖 Choose from local models manually — or let the system **auto-select** the best model
+- 🌐 Output language: **Persian** or **English**
+- 📥 Outputs result as a downloadable `.tex` file
+- 💻 Clean, modern UI with particle background and responsive design
+- 📜 Real-time status log with timestamps and detailed process tracking
 
 ---
 
-### Frontend Setup
+## 📁 Project Structure
 
-1. Navigate to the frontend directory:
-
-   ```bash
-   cd frontend
-   ```
-
-2. Install frontend dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Build the React frontend:
-
-   ```bash
-   npm run build
-   ```
-
-4. Copy the contents of the `build/` directory into the backend’s static directory:
-
-   ```bash
-   cp -r build/* ../static/
-   ```
+```
+modern-qg/
+├── backend/
+│   ├── main.py
+│   └── utils.py
+├── frontend/
+│   ├── index.html
+│   └── static/
+│       ├── style.css
+│       ├── script.js
+│       └── particles-config.js
+├── models/
+│   └── (your .gguf model files here)
+├── requirements.txt
+└── README.md
+```
 
 ---
 
-## Usage
+## ⚙️ Installation
 
-- Open your browser and go to:  
-  `http://127.0.0.1:8000/static/index.html`
+### 1. Clone the repository
 
-- Upload your content file (Markdown `.md` or LaTeX `.tex`).
-- Select output language and model or use automatic detection.
-- Click **Generate Questions**.
-- Download the generated `.tex` file when ready.
+```bash
+git clone https://github.com/your-username/modern-qg.git
+cd modern-qg
+```
+
+### 2. Create virtual environment (optional but recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate        # Linux/macOS
+venv\Scripts\activate           # Windows
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Add your models
+
+Place your `.gguf` model files inside the `models/` directory. For example:
+
+```
+models/
+├── DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf
+└── Llama-3.2-3B-Instruct-Q4_K_M.gguf
+```
 
 ---
 
-## Customization & Extensibility
+## 🖥️ Running the App
 
-- Language models and prompt templates can be adjusted in `backend/main.py`.
-- Frontend styles and animations are located in `backend/static/style.css` and associated JavaScript files.
-- Replace the university logos in `backend/static/logo.svg` or add your own assets.
-- Background animation can be further customized or replaced with other effects.
+Start the FastAPI server with:
 
----
+```bash
+uvicorn backend.main:app --reload
+```
 
-## License
+Then open your browser and go to:
 
-This project is licensed under the MIT License.
-
----
-
-## Contact & Support
-
-Feel free to open issues or contribute via GitHub repository:  
-[https://github.com/sirnaser/modern-qg](https://github.com/sirnaser/modern-qg)
+```
+http://localhost:8000
+```
 
 ---
 
-Thank you for using this project! 🌟
+## 📤 Inputs
+
+### Markdown Mode
+Upload a `.md` file containing raw lesson content.
+
+### TeX Mode
+Upload a `.tex` file containing example exam questions.
+
+---
+
+## 📄 Output Format
+
+The result is generated as a `.tex` file with the following structure:
+
+```latex
+\section*{Questions}
+(Generated questions)
+
+\newpage
+
+\section*{Answers}
+(Answers and references)
+```
+
+---
+
+## 🤖 Model Selection
+
+You can either:
+- **Manually** select a model from the dropdown, or
+- Choose **"Auto-select best model"** to let the system analyze the input and decide which model fits best (using a helper model like DeepSeek).
+
+---
+
+## 🛠️ Advanced Notes
+
+- Make sure your system supports local inference. At least **8GB RAM** is recommended.
+- The backend uses [`llama-cpp-python`](https://pypi.org/project/llama-cpp-python/) — no need to compile llama.cpp manually.
+- If you encounter this error:
+
+  ```
+  Requested tokens (5303) exceed context window of 4096
+  ```
+
+  You may adjust the context size (`n_ctx`) in `utils.py`:
+
+  ```python
+  llm = Llama(
+      model_path=model_path,
+      n_ctx=8192,
+      ...
+  )
+  ```
+
+---
+
+## 💬 Status Log
+
+The UI logs all actions, including:
+
+- File uploads
+- Model/language changes
+- Auto-selection attempts
+- Model generation start/complete
+- Error handling with timestamp
+
+This helps users know what’s happening under the hood — like a mini debug console.
+
+---
+
+## 👤 Author
+
+Designed and developed by [@sirnaser](https://github.com/sirnaser)  
+Made with ❤️ for educational tools and open-source AI
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

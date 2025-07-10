@@ -1,6 +1,4 @@
-fastapi
-uvicorn[standard]
-pydantic
-python-multipart
-langchain-community
-ollama
+fastapi==0.110.2
+uvicorn[standard]==0.30.0
+llama-cpp-python==0.2.72
+jinja2==3.1.3
